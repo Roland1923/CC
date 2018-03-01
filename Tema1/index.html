@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>﻿
+<style>
+body, html {
+    height: 100%;
+    margin: 0;
+}
+
+#example1 {
+    background: url("windows_8_wallpaper_by_metroui-d4v6x2e.jpg");
+    /* Full height */
+    height: 100%; 
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+h1   {color: red;
+text-align:center;
+margin-top: 5px;}
+p    {color: white;
+margin-left: 7%;
+font-family: "Times New Roman", Times, serif;
+font-style: italic;}
+</style>
+
+
+
+<div id="example1">
+
+<h1>CLOUD COMPUTING - First homework</h1>
+
+
+<p id="getgeolocation"></p>
+<p id="getweather"></p>
+<p>Tocmai ai primit SMS...</p>
+
+<!--Get geo location!-->
+<script>
+
+var getIp = new XMLHttpRequest();
+getIp.open("GET", "https://api.ipify.org", false);
+getIp.send ( null );
+ip = getIp.responseText;
+
+function httpGetLocation(theUrl)
+{
+
+    var xmlHttp = new XMLHttpRequest();
+	xmlHttp.overrideMimeType('text/xml; charset=iso-8859-1');
+    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+    xmlHttp.send( null );
+    return xmlHttp.responseText;
+}
+var url = "http://freegeoip.net/json/".concat(ip);
+var result = httpGetLocation(url);
+result = JSON.parse(result);
+document.getElementById("getgeolocation").innerHTML = "Locatia curenta cu IP-ul: " + ip + " se afla	la latitudinea: " + result.latitude + " si longitutdinea: " + result.longitude + "!";
+
+
+</script>
+
+
+
+
+<!--Get Weather by longitude and latitude provided before!-->
+
+
+
+<script>
+function httpGetWeather(theUrl)
+{
+    var xmlHttp = new XMLHttpRequest();
+	xmlHttp.overrideMimeType('text/xml; charset=iso-8859-1');
+    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+    xmlHttp.send( null );
+    return xmlHttp.responseText;
+}
+var coord = result.latitude + "," + result.longitude;
+var url = "http://api.apixu.com/v1/current.json?key=9aaa8dd8b5fa4e13897235323182802&q=" + coord;
+var obj =  httpGetWeather(url);
+
+var regex = obj.match("\{\"last_updated_epoch.*vis_miles\"\:[0-9]+\.[0-9]+\}");
+
+var str1 = "Afara sunt ";
+var str2 = " grade Celsius.";
+
+var parsedJson = JSON.parse(regex);
+
+var result = str1.concat(parsedJson.temp_c);
+result = result.concat(str2);
+
+document.getElementById("getweather").innerHTML = result;
+
+
+if(parsedJson.temp_c<=10){
+	var textMsg = "Salut! Este foarte frig afara, sunt " + parsedJson.temp_c + " grade. Iti sugerez sa te imbraci adecvat!";
+}
+else {
+	var textMsg = "Salut! Sunt peste 10 grade, mai exact " + parsedJson.temp_c + " grade. Poti sa te imbraci mai lejer!";
+}
+function sayHelloWorld() {
+    var hello = "hello";
+    var world = "world";
+
+    window.location.href = "index.php?w1=" + hello + "&w2=" + world;
+}
+</script>
+
+ <input type="button" value="Send SMS" onclick="post();">
+ 
+<script type="text/javascript">
+
+function post()
+{
+
+ var msg = textMsg;
+ 
+$.ajax({  
+    type: 'POST',  
+    url: 'http://127.0.0.1:8081/test.php', 
+    data: { msg: this.msg },
+    success: function(response) {
+        content.html(response);
+    }
+});
+}
+
+
+
+</script>
+
+
+</div>
+</body>
+</html>
+
